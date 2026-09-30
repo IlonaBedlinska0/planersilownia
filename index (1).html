@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b060a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="silna">
+<title>silna</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2230%22 fill=%22%230b060a%22/><text x=%2250%22 y=%2272%22 font-size=%2270%22 text-anchor=%22middle%22 fill=%22%23ff3d8b%22 font-family=%22Georgia%22 font-style=%22italic%22>s</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,600&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b060a;--panel:#180d14;--line:#2e1a26;--pink:#ff3d8b;--soft:#ffb3d1;--ink:#fff0f5;--mute:#a58796;
+--serif:'Fraunces',Georgia,'Times New Roman',serif;--sans:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+body{min-height:100vh;padding:env(safe-area-inset-top) 18px calc(28px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.top{display:flex;align-items:flex-end;justify-content:space-between;padding:26px 0 6px}
+.logo{font-family:var(--serif);font-style:italic;font-weight:600;font-size:56px;line-height:.9;color:var(--pink);letter-spacing:-2px}
+.nav{display:flex;gap:6px}
+.nav button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);font-size:20px;color:var(--soft)}
+.nav button:active{background:var(--pink);color:#1a0610}
+.month{font-family:var(--serif);font-style:italic;font-size:26px;margin:18px 0 2px;color:var(--ink)}
+.stats{color:var(--mute);font-size:14px;margin-bottom:18px}
+.stats b{color:var(--soft);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px 4px}
+.wd{text-align:center;font-size:12px;color:var(--mute);padding-bottom:4px}
+.day{aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;font-size:15px;color:var(--soft);border:1px solid transparent}
+.day.empty{pointer-events:none}
+.day.today{border-color:var(--pink)}
+.day.on{background:var(--pink);color:#1a0610;font-weight:700;box-shadow:0 0 18px rgba(255,61,139,.35)}
+.day.on i{font-family:var(--serif);font-size:20px;line-height:1;font-weight:600}
+.day.on small{font-size:9px;opacity:.7;line-height:1;margin-top:1px}
+.day.on.multi::after{content:"";position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--bg);border:1.5px solid var(--soft)}
+.legend{margin-top:22px;color:var(--mute);font-size:12.5px;line-height:1.6}
+.veil{position:fixed;inset:0;background:rgba(5,2,4,.72);opacity:0;pointer-events:none;transition:opacity .2s;z-index:5}
+.veil.open{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;height:90vh;height:90dvh;background:var(--bg);border:1px solid var(--line);border-bottom:0;border-radius:28px 28px 0 0;z-index:6;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.sheet.open{transform:none}
+.sh-head{display:flex;justify-content:space-between;align-items:center;padding:20px 20px 10px}
+.sh-head h2{margin:0;font-family:var(--serif);font-style:italic;font-weight:400;font-size:28px}
+.x{width:38px;height:38px;border-radius:50%;background:var(--panel);font-size:18px;color:var(--soft)}
+.sh-body{overflow-y:auto;padding:4px 20px calc(30px + env(safe-area-inset-bottom));flex:1}
+.add{margin:6px 0 18px}
+.add p{margin:0 0 8px;color:var(--mute);font-size:13px}
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.plans button{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px 12px;text-align:left;display:flex;gap:10px;align-items:center}
+.plans button:active{border-color:var(--pink)}
+.plans em{font-family:var(--serif);font-size:30px;color:var(--pink);line-height:1;width:24px}
+.plans span{font-size:13px;line-height:1.25;color:var(--soft)}
+.plans span b{display:block;color:var(--ink);font-size:14px}
+.extra{display:flex;gap:8px;margin-top:8px}
+.extra button{flex:1;border:1px dashed var(--pink);color:var(--pink);border-radius:18px;padding:11px;font-weight:700;font-size:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:16px 14px;margin-bottom:16px}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:0 4px}
+.ch h3{margin:0;font-family:var(--serif);font-style:italic;font-weight:600;font-size:22px}
+.ch h3 small{font-family:var(--sans);font-style:normal;font-weight:400;font-size:13px;color:var(--mute);margin-left:6px}
+.del{color:var(--mute);font-size:13px;padding:6px 8px}
+.ex{padding:12px 0;border-top:1px solid var(--line)}
+.exh{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:0 4px;text-align:left;width:100%}
+.exh b{font-size:15.5px;font-weight:500;line-height:1.3}
+.exh span{font-size:12.5px;color:var(--pink);white-space:nowrap;font-weight:700}
+.ex.done .exh b{color:var(--mute);text-decoration:line-through;text-decoration-color:var(--pink)}
+.note{font-size:12.5px;color:var(--mute);padding:3px 4px 0;line-height:1.35}
+.last{font-size:12px;color:var(--soft);padding:3px 4px 0}
+.sets{margin-top:8px}
+.set{display:grid;grid-template-columns:22px 1fr 1fr 44px;gap:8px;align-items:center;margin-bottom:6px}
+.set.h{font-size:11px;color:var(--mute);margin-bottom:2px}
+.set .n{color:var(--mute);font-size:13px;text-align:center}
+input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;color:var(--ink);font:inherit;font-size:16px;min-width:0}
+input:focus{outline:2px solid var(--pink);outline-offset:0;border-color:transparent}
+input::placeholder{color:#6d5361}
+.chk{width:44px;height:40px;border-radius:14px;border:1.5px solid var(--line);color:transparent;font-size:18px;font-weight:700}
+.chk.on{background:var(--pink);border-color:var(--pink);color:#1a0610}
+.more{margin:2px 0 0 4px;color:var(--mute);font-size:13px;padding:6px 0}
+.cf{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+.cf label{font-size:12px;color:var(--mute);display:block;margin:0 0 4px 4px}
+.cf .w{grid-column:1/-1}
+.pace{margin-top:10px;padding:0 4px;color:var(--soft);font-size:14px;min-height:20px}
+.empty-msg{color:var(--mute);text-align:center;padding:14px 10px 4px;font-size:14px;line-height:1.5}
+button:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.sheet,.veil{transition:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">silna</div>
+  <div class="nav"><button id="prev" aria-label="Poprzedni miesiąc">‹</button><button id="next" aria-label="Następny miesiąc">›</button></div>
+</header>
+<div class="month" id="month"></div>
+<div class="stats" id="stats"></div>
+<div class="grid" id="cal"></div>
+<div class="legend">A B C D – treningi siłowe &nbsp; ♥ cardio &nbsp; » bieg<br>Kliknij dzień, żeby dodać albo zobaczyć trening.</div>
+
+<div class="veil" id="veil"></div>
+<section class="sheet" id="sheet" aria-hidden="true">
+  <div class="sh-head"><h2 id="sh-title"></h2><button class="x" id="close" aria-label="Zamknij">✕</button></div>
+  <div class="sh-body" id="sh-body"></div>
+</section>
+
+<script>
+const PLAN = {
+  A:{t:'Dół 1',s:'Nogi i pośladki',ex:[
+    ['Belt squat',3,'8'],
+    ['Przysiady bułgarskie',3,'8','Pochyl lekko tułów do przodu, aby mocniej zaangażować pośladek.'],
+    ['Hyperextension',3,'8','Zaokrąglij lekko górę pleców i podwiń miednicę – ruch tylko z pośladka.'],
+    ['Odwodzenie na maszynie',3,'12'],
+    ['Przywodzenie na maszynie',3,'12'],
+    ['Wspięcia na palce stojąc (łydki)',3,'15'],
+    ['Allahy – spięcia brzucha na wyciągu klęcząc',3,'12–15']]},
+  B:{t:'Góra 1',s:'Plecy, klatka, barki, ramiona',ex:[
+    ['Przyciąganie drążka wyciągu górnego',3,'8'],
+    ['Wyciskanie na ławce skośnej',3,'8'],
+    ['Wiosłowanie sztangą',3,'8'],
+    ['Wznosy hantli bokiem (boczny akton barku)',3,'12–15','Kluczowe dla proporcji klepsydry.'],
+    ['Prostowanie przedramion na wyciągu (triceps)',3,'10–12'],
+    ['Uginanie przedramion z hantlami z supinacją (biceps)',3,'10–12'],
+    ['Plank / Deadbug (brzuch, core)',3,'45 s / 10 na stronę']]},
+  C:{t:'Dół 2',s:'Pośladki i tył uda',ex:[
+    ['Hip thrust ze sztangą',4,'8–10','Główne ćwiczenie budujące pośladki.'],
+    ['RDL – martwy ciąg na prostych nogach z hantlami',3,'8–10','Rozciąganie pośladka i tyłu uda.'],
+    ['Wykopy w tył na wyciągu (cable kickback)',3,'12–15','Izolacja pośladka.'],
+    ['Uginanie nóg na maszynie (dwugłowe uda)',3,'10–12'],
+    ['Wspięcia na palce siedząc lub na suwnicy (łydki)',3,'15'],
+    ['Unoszenie nóg w wiszeniu lub na poręczach',3,'12']]},
+  D:{t:'Góra 2',s:'Plecy, barki, klatka, ramiona',ex:[
+    ['Ściąganie drążka do klatki chwytem neutralnym (wąsko)',3,'10'],
+    ['Wyciskanie hantli na ławce płaskiej lub lekki skos',3,'10'],
+    ['Wyciskanie hantli nad głowę siedząc',3,'10'],
+    ['Face pulls – tył barku na wyciągu',3,'12–15','Postawa i zdrowie barków.'],
+    ['Wznosy bokiem na wyciągu (boczne barki)',3,'12–15'],
+    ['Super-seria: uginanie ze sztangą łamaną + dipsy na maszynie',3,'12','Biceps + triceps bez przerwy.']]}
+};
+const MONTHS=['styczeń','luty','marzec','kwiecień','maj','czerwiec','lipiec','sierpień','wrzesień','październik','listopad','grudzień'];
+const MONTHS_GEN=['stycznia','lutego','marca','kwietnia','maja','czerwca','lipca','sierpnia','września','października','listopada','grudnia'];
+const KEY='silna-v1';
+let data={};
+try{data=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){data={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}};
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id);
+let cur=new Date(); cur.setDate(1);
+let openKey=null;
+
+function sym(s){return PLAN[s.type]?s.type:(s.type==='run'?'»':'♥')}
+
+function renderCal(){
+  const y=cur.getFullYear(),m=cur.getMonth();
+  $('month').textContent=MONTHS[m]+' '+y;
+  const off=(new Date(y,m,1).getDay()+6)%7, dim=new Date(y,m+1,0).getDate();
+  const todayK=ymd(new Date());
+  let h=['Pn','Wt','Śr','Cz','Pt','So','Nd'].map(d=>`<div class="wd">${d}</div>`).join('');
+  for(let i=0;i<off;i++)h+='<div class="day empty"></div>';
+  let cnt=0,km=0;
+  for(let d=1;d<=dim;d++){
+    const k=y+'-'+pad(m+1)+'-'+pad(d), ss=data[k]||[];
+    ss.forEach(s=>{cnt++;if(s.type==='run'||s.type==='cardio')km+=parseFloat(String(s.km||'').replace(',','.'))||0});
+    const on=ss.length?' on'+(ss.length>1?' multi':''):'';
+    h+=`<button class="day${on}${k===todayK?' today':''}" data-k="${k}">${ss.length?`<i>${sym(ss[0])}</i><small>${d}</small>`:d}</button>`;
+  }
+  $('cal').innerHTML=h;
+  $('stats').innerHTML=cnt?`W tym miesiącu: <b>${cnt}</b> ${cnt===1?'trening':(cnt%10>1&&cnt%10<5&&(cnt<10||cnt>20)?'treningi':'treningów')}${km?` · <b>${Math.round(km*10)/10}</b> km`:''}`:'Jeszcze pusto – czas to zmienić.';
+}
+
+function lastKg(name,beforeKey){
+  const keys=Object.keys(data).filter(k=>k<beforeKey).sort().reverse();
+  for(const k of keys)for(const s of data[k])for(const e of (s.ex||[]))if(e.n===name){
+    const v=e.sets.map(x=>x.kg).filter(Boolean).pop(); if(v)return v;
+  }
+  return '';
+}
+
+function sessionHTML(s,k){
+  if(PLAN[s.type]){
+    const p=PLAN[s.type];
+    const ex=s.ex.map((e,ei)=>{
+      const done=e.sets.length&&e.sets.every(x=>x.d), lk=lastKg(e.n,k);
+      return `<div class="ex${done?' done':''}">
+        <button class="exh" data-act="all" data-s="${s.id}" data-e="${ei}"><b>${esc(e.n)}</b><span>${e.sets.length}×${esc(e.r)}</span></button>
+        ${e.note?`<div class="note">${esc(e.note)}</div>`:''}
+        ${lk?`<div class="last">ostatnio: ${esc(lk)} kg</div>`:''}
+        <div class="sets"><div class="set h"><span></span><span>ciężar (kg)</span><span>powtórzenia</span><span></span></div>
+        ${e.sets.map((x,i)=>`<div class="set"><span class="n">${i+1}</span>
+          <input inputmode="decimal" placeholder="${lk||'kg'}" value="${esc(x.kg||'')}" data-s="${s.id}" data-e="${ei}" data-i="${i}" data-f="kg" aria-label="Ciężar, seria ${i+1}">
+          <input inputmode="numeric" placeholder="${esc(e.r)}" value="${esc(x.r||'')}" data-s="${s.id}" data-e="${ei}" data-i="${i}" data-f="r" aria-label="Powtórzenia, seria ${i+1}">
+          <button class="chk${x.d?' on':''}" data-act="chk" data-s="${s.id}" data-e="${ei}" data-i="${i}" aria-label="Zaznacz serię ${i+1}">✓</button></div>`).join('')}</div>
+        <button class="more" data-act="more" data-s="${s.id}" data-e="${ei}">+ dodaj serię</button>
+      </div>`}).join('');
+    return `<div class="card"><div class="ch"><h3>Trening ${s.type}<small>${p.t}</small></h3><button class="del" data-act="del" data-s="${s.id}">usuń</button></div>${ex}</div>`;
+  }
+  const run=s.type==='run';
+  return `<div class="card"><div class="ch"><h3>${run?'Bieg':'Cardio'}</h3><button class="del" data-act="del" data-s="${s.id}">usuń</button></div>
+    <div class="cf">
+      ${run?'':`<div class="w"><label>Co to było?</label><input placeholder="np. orbitrek, rower, schody" value="${esc(s.name||'')}" data-s="${s.id}" data-f="name"></div>`}
+      <div><label>Czas (min)</label><input inputmode="decimal" placeholder="30" value="${esc(s.min||'')}" data-s="${s.id}" data-f="min"></div>
+      <div><label>Dystans (km)${run?'':' – opcjonalnie'}</label><input inputmode="decimal" placeholder="5" value="${esc(s.km||'')}" data-s="${s.id}" data-f="km"></div>
+    </div>
+    ${run?`<div class="pace" id="pace-${s.id}">${paceText(s)}</div>`:''}</div>`;
+}
+function paceText(s){
+  const t=parseFloat(String(s.min||'').replace(',','.')),d=parseFloat(String(s.km||'').replace(',','.'));
+  if(!t||!d)return '';
+  const p=t/d,m=Math.floor(p),sec=Math.round((p-m)*60);
+  return `Tempo: <b>${m}:${pad(sec===60?0:sec)}</b> min/km`;
+}
+
+function renderSheet(keepScroll){
+  const [y,m,d]=openKey.split('-').map(Number);
+  $('sh-title').textContent=d+' '+MONTHS_GEN[m-1];
+  const ss=data[openKey]||[], body=$('sh-body'), top=body.scrollTop;
+  body.innerHTML=`<div class="add"><p>Dodaj do tego dnia</p>
+    <div class="plans">${Object.keys(PLAN).map(k=>`<button data-act="add" data-t="${k}"><em>${k}</em><span><b>${PLAN[k].t}</b>${PLAN[k].s}</span></button>`).join('')}</div>
+    <div class="extra"><button data-act="add" data-t="cardio">♥ Cardio</button><button data-act="add" data-t="run">» Bieg</button></div></div>`
+    + (ss.length?ss.map(s=>sessionHTML(s,openKey)).join(''):'<div class="empty-msg">Nic tu jeszcze nie ma.<br>Wybierz trening powyżej.</div>');
+  if(keepScroll)body.scrollTop=top;
+}
+
+function openSheet(k){openKey=k;renderSheet();$('sheet').classList.add('open');$('veil').classList.add('open');$('sheet').setAttribute('aria-hidden','false');$('sh-body').scrollTop=0}
+function closeSheet(){$('sheet').classList.remove('open');$('veil').classList.remove('open');$('sheet').setAttribute('aria-hidden','true');openKey=null;renderCal()}
+const find=id=>(data[openKey]||[]).find(s=>s.id===id);
+
+$('cal').addEventListener('click',e=>{const b=e.target.closest('.day[data-k]');if(b)openSheet(b.dataset.k)});
+$('close').onclick=closeSheet;$('veil').onclick=closeSheet;
+$('prev').onclick=()=>{cur.setMonth(cur.getMonth()-1);renderCal()};
+$('next').onclick=()=>{cur.setMonth(cur.getMonth()+1);renderCal()};
+
+$('sh-body').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act, s=find(b.dataset.s);
+  if(a==='add'){
+    const t=b.dataset.t, ns={id:uid(),type:t};
+    if(PLAN[t])ns.ex=PLAN[t].ex.map(x=>({n:x[0],r:x[2],note:x[3]||'',sets:Array.from({length:x[1]},()=>({kg:'',r:'',d:false}))}));
+    (data[openKey]=data[openKey]||[]).push(ns);save();renderSheet();
+    const cards=$('sh-body').querySelectorAll('.card');if(cards.length)cards[cards.length-1].scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+  if(a==='del'){
+    if(confirm('Usunąć tę sesję?')){data[openKey]=data[openKey].filter(x=>x.id!==b.dataset.s);if(!data[openKey].length)delete data[openKey];save();renderSheet(true)}
+    return;
+  }
+  if(!s)return;
+  const ex=s.ex&&s.ex[b.dataset.e];
+  if(a==='chk'){const x=ex.sets[b.dataset.i];x.d=!x.d}
+  if(a==='all'){const all=ex.sets.every(x=>x.d);ex.sets.forEach(x=>x.d=!all)}
+  if(a==='more'){ex.sets.push({kg:'',r:'',d:false})}
+  save();renderSheet(true);
+});
+
+$('sh-body').addEventListener('input',e=>{
+  const i=e.target;if(!i.dataset.f)return;
+  const s=find(i.dataset.s);if(!s)return;
+  if(s.ex){s.ex[i.dataset.e].sets[i.dataset.i][i.dataset.f]=i.value}
+  else{s[i.dataset.f]=i.value;const p=$('pace-'+s.id);if(p)p.innerHTML=paceText(s)}
+  save();
+});
+
+renderCal();
+</script>
+</body>
+</html>
